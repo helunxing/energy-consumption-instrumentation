@@ -1,0 +1,12 @@
+{
+    "editor.rulers": [80],
+    "workbench.colorCustomizations": {
+       "editor.selectionHighlightBorder": "#000000",
+       "editorGhostText.border": "#000000",
+       "editorLineNumber.activeForeground": "#ffffff",
+       "editorLineNumber.foreground": "#000000",
+       "editorHoverWidget.border": "#000000",
+       "editorBracketMatch.border": "#000000",//匹配括号外框颜色
+       "editorRuler.foreground": "#1d1d1da5"
+    },
+}

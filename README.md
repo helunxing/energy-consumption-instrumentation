@@ -54,12 +54,33 @@ HLS
 
 <https://www.sandvine.com/global-internet-phenomena-report-2019>
 
+<http://dcs.gla.ac.uk/~wim//low-carbon-computing/index.html>
+
+## Measurement Details
+
+### Network
+
+<https://stackoverflow.com/questions/15616378/python-network-bandwidth-monitor>
+
+### Memory
+
+### CPU Time
+
+<https://stackoverflow.com/questions/11356330/how-to-get-cpu-usage>
+
+<https://forum.golangbridge.org/t/cpu-time-consumed-by-go-routine-and-stop-c-library-call/17019/3>
+
+<https://stackoverflow.com/questions/55990074/how-to-measure-execution-time-of-function-in-golang-excluding-waiting-time>
+
+<https://stackoverflow.com/questions/16726779/how-do-i-get-the-total-cpu-usage-of-an-application-from-proc-pid-stat>
+
 ## Develop plan
 
 ### Requirement
 
 * python server and both python and go sever
 * The server side measures the cpu clock, network usage, and memory usage when providing this protocol service in multiple threads, provided that the protocol functionality is implemented.
+
 * The client side enables the definition of packet sizes and bumber of data sent per second
 * Before developing the function, first develop Unit testing, Integration testing or stress testing(for measuring resource consumption under different pressures)
 * The data used in the project should first be provided by the documentation and then transferred to the database provide
