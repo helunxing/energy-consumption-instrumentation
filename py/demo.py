@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# copy and paste from 
+# copy and paste from
 # https://tildegit.org/solderpunk/gemini-demo-1/src/branch/master/gemini-demo.py
 
 
@@ -12,6 +12,8 @@ import ssl
 import tempfile
 import textwrap
 import urllib.parse
+import json
+
 
 caps = mailcap.getcaps()
 menu = []
@@ -28,9 +30,14 @@ def absolutise_url(base, relative):
     return relative
 
 
-while True:
+# load settings of speed and size of data package
+path, _ = os.path.split(os.path.abspath(__file__))
+with open(os.path.join(path, 'setting.json')) as json_setting:
+    setting = json.load(json_setting)
+
+for _ in setting["n_of_times"]:
     # Get input
-    cmd = input("> ").strip()
+    cmd = setting["target_host"].strip()
     # Handle things other than requests
     if cmd.lower() == "q":
         print("Bye!")
@@ -59,6 +66,7 @@ while True:
             context.verify_mode = ssl.CERT_NONE
             s = context.wrap_socket(s, server_hostname=parsed_url.netloc)
             s.sendall((url + '\r\n').encode("UTF-8"))
+            
             # Get header and check for redirects
             fp = s.makefile("rb")
             header = fp.readline()
