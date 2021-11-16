@@ -36,7 +36,7 @@ func main() {
 }
 
 func handleRequest(conn net.Conn) {
-	buf := make([]byte, 1024)
+	buf := make([]byte, 1050)
 
 	// Only read once
 	reqLen, err := conn.Read(buf)

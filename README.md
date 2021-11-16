@@ -134,3 +134,13 @@ Fix the code to make it more elegant and add more comments
 #### weekend2
 
 Complete the first five days if not already done. Read and look for points I can improve
+
+## How to use
+
+### python
+
+go into py/, and create
+
+```sh
+gcc -o libpycall.so -shared -fPIC pycall.c
+```
