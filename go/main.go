@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"strings"
 )
 
 const (
@@ -44,10 +45,24 @@ func handleRequest(conn net.Conn) {
 		fmt.Println("Error reading:", err.Error())
 	}
 
-	fmt.Printf("%s", buf[:reqLen])
+	tmp := string(buf[:reqLen])
+	index := strings.Index(tmp, "\r\n")
+	fmt.Println(reqLen)
+	fmt.Println(index)
+
+	// url := string(buf[:reqLen])
+	// for _, s := range buf[:reqLen] {
+
+	// 	if string(s) == "A" {
+	// 		return "A"
+	// 	} else if string(s) == "B" {
+	// 		return "B"
+	// 	}
+	// }
 
 	// conn.Write([]byte("Message received."))
 	conn.Write([]byte(buf[:reqLen]))
+	conn.Write([]byte(tmp[:index]))
 
 	conn.Close()
 }

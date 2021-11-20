@@ -14,7 +14,7 @@ func doWork() {
 	time.Sleep(time.Second)
 }
 
-func main() {
+func aain() {
 	// p := doWork
 	method.ExeAndPrintCPUusage(doWork)
 }
