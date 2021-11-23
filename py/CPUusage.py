@@ -12,4 +12,5 @@ def ExeAndPrintCPUusage(f):
     cputime1 = lib.getThreadCpuTimeNs()
     f()
     cputime2 = lib.getThreadCpuTimeNs()
-    print(cputime2-cputime1)
+    
+    return "CPU time = %d ns"%(cputime2-cputime1)

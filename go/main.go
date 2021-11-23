@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -25,6 +26,7 @@ func main() {
 
 	fmt.Printf("server listening %s:%s", CONN_HOST, CONN_PORT)
 	fmt.Println()
+	fmt.Println(filepath.Join("..", "data.json"))
 
 	for {
 		conn, err := l.Accept()

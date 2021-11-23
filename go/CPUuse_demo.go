@@ -3,7 +3,7 @@ package main
 import (
 	"time"
 
-	"github.com/helunxing/energy-consumption-instrumentation/goserver/method"
+	"github.com/helunxing/energy-consumption-instrumentation/go/method"
 )
 
 func doWork() {
