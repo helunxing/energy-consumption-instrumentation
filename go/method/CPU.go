@@ -26,7 +26,8 @@ func ExeAndPrintCPUusage(doWork func(int), num int) int64 {
 	cputime1 := C.getThreadCpuTimeNs()
 	doWork(num)
 	cputime2 := C.getThreadCpuTimeNs()
-
+	fmt.Println(cputime1)
+	fmt.Println(cputime2)
 	delta := cputime2 - cputime1
 	fmt.Println(delta)
 	return int64(delta)
