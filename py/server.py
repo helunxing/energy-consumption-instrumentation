@@ -2,29 +2,26 @@ import socket
 import CPUusage
 import time
 import os
+import utils
+import json
 
-def server():
+
+def server(num):
     HOST = "localhost"
     PORT = 1966
 
-    # f = open("")
-    # long running
-    # do something other
-
     start = time.time()
-    f = open(os.path.join("..", "README.md"))
+    f = open(utils.pathGen("..", "datas.json"), 'r')
+    load_datas = json.load(f)
     f.close()
-    # long running
-    # do something other
     end = time.time()
-    print(end-start)
+    print("reading datas file using time (IO_time): %s" % (end-start))
 
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         s.bind((HOST, PORT))
         s.listen()
-        cont = True
-        # while cont:
-        for i in range(5):
+        for _ in range(num):
             conn, addr = s.accept()
             with conn:
                 data = conn.recv(1050)
@@ -38,9 +35,30 @@ def server():
                 if not paths[-1]:
                     paths.pop()
                 key = paths[-1]
-                print('request %s from %s' % (key, addr))
+                # print('request %s from %s' % (key, addr))
                 meta = "context"
-                conn.sendall(('20 %s\r\n' % (meta)).encode())
+                conn.sendall(('20 %s\r\n' % (load_datas[key])).encode())
+        s.close()
 
 
-print(CPUusage.ExeAndPrintCPUusage(server))
+with open(utils.pathGen("..", "control.json"), 'r') as load_f:
+    load_settings = json.load(load_f)
+
+settings = []
+for i in range(load_settings["total"]):
+    settings.append(
+        (load_settings[str(i)]["times"], load_settings[str(i)]["gap"]))
+
+
+for i, pair in enumerate(settings):
+    num, _ = pair
+    print()
+    print("python server start no. %s test" % i)
+    print("CPU using time (CPU_time): %s" %
+          CPUusage.ExeAndPrintCPUusage(server, num))
+
+    if i != len(settings)-1:
+        print("sleep for 1 second, wait the port")
+        time.sleep(1)
+    else:
+        print("server end")

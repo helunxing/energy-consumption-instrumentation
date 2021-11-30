@@ -22,12 +22,14 @@ import (
 	"github.com/klauspost/cpuid/v2"
 )
 
-func ExeAndPrintCPUusage(doWork func()) {
+func ExeAndPrintCPUusage(doWork func(int), num int) int64 {
 	cputime1 := C.getThreadCpuTimeNs()
-	doWork()
+	doWork(num)
 	cputime2 := C.getThreadCpuTimeNs()
-	fmt.Printf("CPU time = %d ns\n", (cputime2 - cputime1))
 
+	delta := cputime2 - cputime1
+
+	return int64(delta)
 }
 
 // Show the CPU speed
