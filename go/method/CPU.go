@@ -5,7 +5,7 @@ package method
 #include <time.h>
 #include <stdio.h>
 
-static long long getThreadCpuTimeNs() {
+long long getThreadCpuTimeNs() {
     struct timespec t;
     if (clock_gettime(CLOCK_THREAD_CPUTIME_ID, &t)) {
         perror("clock_gettime");
@@ -28,7 +28,7 @@ func ExeAndPrintCPUusage(doWork func(int), num int) int64 {
 	cputime2 := C.getThreadCpuTimeNs()
 
 	delta := cputime2 - cputime1
-
+	fmt.Println(delta)
 	return int64(delta)
 }
 
@@ -52,4 +52,7 @@ func PrintCPU() {
 	if cpuid.CPU.Supports(cpuid.SSE, cpuid.SSE2) {
 		fmt.Println("We have Streaming SIMD 2 Extensions")
 	}
+}
+func main() {
+	PrintCPU()
 }

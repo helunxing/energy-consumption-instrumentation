@@ -23,8 +23,10 @@ const (
 	PRO_ADDR  = "/Users/h/code/energy-consumption-instrumentation/"
 )
 
-func main() {
+var IO_time_list []float64
 
+func main() {
+	var cPU_time_list []int64
 	jsonFile, err := os.Open(pathGen("control.json"))
 	if err != nil {
 		fmt.Println(err)
@@ -38,19 +40,17 @@ func main() {
 	end := len(control) - 1
 	for idx := 0; idx < end; idx++ {
 		num := control[strconv.Itoa(idx)]["times"]
-		fmt.Println("go server start no. ", idx)
-		fmt.Println("CPU using time (CPU_time): ", method.ExeAndPrintCPUusage(server, int(num)))
-		fmt.Println()
-
+		cPU_time := method.ExeAndPrintCPUusage(server, int(num))
+		// fmt.Println("CPU using time (CPU_time): ", cPU_time)
+		cPU_time_list = append(cPU_time_list, cPU_time)
+		// fmt.Println()
+		fmt.Println("go server done no. ", idx)
 		time.Sleep(time.Second)
 	}
+	fmt.Println(IO_time_list)
+	fmt.Println(cPU_time_list)
+}
 
-}
-func reusePort(network, address string, conn syscall.RawConn) error {
-	return conn.Control(func(descriptor uintptr) {
-		syscall.SetsockoptInt(int(descriptor), syscall.SOL_SOCKET, syscall.SO_REUSEPORT, 1)
-	})
-}
 func server(num int) {
 
 	start := time.Now()
@@ -60,14 +60,14 @@ func server(num int) {
 	}
 	defer jsonFile.Close()
 	elapsed := time.Since(start)
-	fmt.Println("reading datas file using time (IO_time):", elapsed)
+	// fmt.Println("reading datas file using time (IO_time):", elapsed)
+	IO_time_list = append(IO_time_list, float64(elapsed))
 
 	byteValue, _ := ioutil.ReadAll(jsonFile)
 	var datas map[string]string
 	json.Unmarshal([]byte(byteValue), &datas)
 
 	config := &net.ListenConfig{Control: reusePort}
-
 	l, err := config.Listen(context.Background(), CONN_TYPE, CONN_HOST+":"+CONN_PORT)
 
 	if err != nil {
@@ -75,48 +75,46 @@ func server(num int) {
 		os.Exit(1)
 	}
 
-	defer l.Close()
-
-	fmt.Printf("server listening %s:%s\n", CONN_HOST, CONN_PORT)
-
 	for i := 0; i < num; i++ {
 		conn, err := l.Accept()
 		if err != nil {
 			fmt.Println("net.Listen.Accept", err.Error())
 			os.Exit(1)
 		}
-
-		buf := make([]byte, 1050)
-
-		reqLen, err := conn.Read(buf)
-		if err != nil {
-			fmt.Println("Error reading:", err.Error())
-		}
-
-		tmp := string(buf[:reqLen])
-		index := strings.Index(tmp, "\r\n")
-
-		// url := string(buf[:reqLen])
-		// for _, s := range buf[:reqLen] {
-
-		// 	if string(s) == "A" {
-		// 		return "A"
-		// 	} else if string(s) == "B" {
-		// 		return "B"
-		// 	}
-		// }
-		paths := strings.Split(tmp[:index], "/")
-		reqTar := paths[len(paths)-2]
-		var res string = "20 "
-		res += datas[reqTar]
-		res += "\r\n"
-		conn.Write([]byte(res))
-
-		defer conn.Close()
+		handle(conn, datas)
 	}
 
+	defer l.Close()
+
+}
+
+func handle(conn net.Conn, datas map[string]string) {
+	buf := make([]byte, 1050)
+
+	reqLen, err := conn.Read(buf)
+	if err != nil {
+		fmt.Println("Error reading:", err.Error())
+	}
+
+	tmp := string(buf[:reqLen])
+	index := strings.Index(tmp, "\r\n")
+
+	paths := strings.Split(tmp[:index], "/")
+	reqTar := paths[len(paths)-2]
+	var res string = "20 "
+	res += datas[reqTar]
+	res += "\r\n"
+	conn.Write([]byte(res))
+
+	defer conn.Close()
 }
 
 func pathGen(s string) string {
 	return filepath.Join(PRO_ADDR, s)
+}
+
+func reusePort(network, address string, conn syscall.RawConn) error {
+	return conn.Control(func(descriptor uintptr) {
+		syscall.SetsockoptInt(int(descriptor), syscall.SOL_SOCKET, syscall.SO_REUSEPORT, 1)
+	})
 }

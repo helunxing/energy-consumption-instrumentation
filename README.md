@@ -144,3 +144,5 @@ go into py/, and create
 ```sh
 gcc -o libpycall.so -shared -fPIC pycall.c
 ```
+
+<http://dcs.gla.ac.uk/~wim//low-carbon-computing/index.html>

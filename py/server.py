@@ -5,6 +5,9 @@ import os
 import utils
 import json
 
+IO_time_list = []
+CPU_time_list = []
+
 
 def server(num):
     HOST = "localhost"
@@ -15,7 +18,9 @@ def server(num):
     load_datas = json.load(f)
     f.close()
     end = time.time()
-    print("reading datas file using time (IO_time): %s" % (end-start))
+    # print("reading datas file using time (IO_time): %s" %
+    #       (end-start)*pow(0.1, 6))
+    IO_time_list.append((end-start)*pow(10, 6))
 
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -52,13 +57,15 @@ for i in range(load_settings["total"]):
 
 for i, pair in enumerate(settings):
     num, _ = pair
-    print()
-    print("python server start no. %s test" % i)
-    print("CPU using time (CPU_time): %s" %
-          CPUusage.ExeAndPrintCPUusage(server, num))
-
+    cpu_time = CPUusage.ExeAndPrintCPUusage(server, num)*0.001
+    # print("CPU using time (CPU_time): %s" % cpu_time)
+    CPU_time_list.append(cpu_time)
+    print("python server no. %s test done" % i)
     if i != len(settings)-1:
-        print("sleep for 1 second, wait the port")
+        # print("sleep for 1 second, wait the port")
         time.sleep(1)
     else:
         print("server end")
+
+print("IO time: ", IO_time_list)
+print("CPU time: ", CPU_time_list)
